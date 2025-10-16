@@ -11,7 +11,7 @@ from datetime import datetime, time as dtime, timedelta
 from SmartApi.smartConnect import SmartConnect
 import threading
 import numpy as np
-
+send_telegram("RUNNING")
 warnings.filterwarnings("ignore")
 
 # ---------------- CONFIG ----------------
