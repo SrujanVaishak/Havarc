@@ -6,7 +6,7 @@ on:
 jobs:
   run-algo:
     runs-on: ubuntu-latest
-    timeout-minutes: 1200  # 20 hours max
+    timeout-minutes: 2000  # 20 hours max
 
     steps:
     - name: Checkout repository
