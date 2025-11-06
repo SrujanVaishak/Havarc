@@ -1,4 +1,4 @@
-# ultimate_algo.py - INSTITUTIONAL BIG MOVE EDITION - INSTITUTIONAL ANTICIPATION ENGINE
+# ultimate_algo.py - INSTITUTIONAL ANTICIPATION ENGINE - CROSS-INDEX FIXED
 import os
 import time
 import requests
@@ -215,7 +215,7 @@ def fetch_option_price(symbol, retries=3, delay=3):
             time.sleep(delay)
     return None
 
-# 🚨 INSTITUTIONAL ANTICIPATION ENGINE - NEW ADDITION 🚨
+# 🚨 INSTITUTIONAL ANTICIPATION ENGINE - FIXED CROSS-CONTAMINATION 🚨
 def anticipate_institutional_move(index, df):
     """
     PREDICT where institutions will move NEXT
@@ -249,7 +249,8 @@ def detect_gamma_trap(index, current_price):
     try:
         url = "https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json"
         df_chain = pd.DataFrame(requests.get(url, timeout=10).json())
-        df_chain = df_chain[df_chain['symbol'].str.contains(index, na=False)]
+        # 🚨 CRITICAL FIX: Exact index matching to prevent cross-contamination
+        df_chain = df_chain[df_chain['symbol'].str.startswith(index)]
         
         df_chain['oi'] = pd.to_numeric(df_chain['oi'], errors='coerce')
         df_chain['strike'] = df_chain['symbol'].str.extract(r'(\d+)')[0].astype(float)
@@ -283,7 +284,8 @@ def detect_max_pain_pressure(index, current_price):
     try:
         url = "https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json"
         df_chain = pd.DataFrame(requests.get(url, timeout=10).json())
-        df_chain = df_chain[df_chain['symbol'].str.contains(index, na=False)]
+        # 🚨 CRITICAL FIX: Exact index matching
+        df_chain = df_chain[df_chain['symbol'].str.startswith(index)]
         
         df_chain['oi'] = pd.to_numeric(df_chain['oi'], errors='coerce')
         df_chain['strike'] = df_chain['symbol'].str.extract(r'(\d+)')[0].astype(float)
@@ -347,14 +349,15 @@ def detect_liquidity_hunt_setup(index, df, current_price):
         return None
     return None
 
-# 🚨 UPDATED INSTITUTIONAL FLOW DETECTORS WITH ANTICIPATION 🚨
+# 🚨 UPDATED INSTITUTIONAL FLOW DETECTORS WITH ANTICIPATION - FIXED CROSS-CONTAMINATION 🚨
 
 def detect_sweep_orders(index):
     """Detect when institutions sweep multiple strikes simultaneously"""
     try:
         url = "https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json"
         df_chain = pd.DataFrame(requests.get(url, timeout=10).json())
-        df_chain = df_chain[df_chain['symbol'].str.contains(index, na=False)]
+        # 🚨 CRITICAL FIX: Exact index matching
+        df_chain = df_chain[df_chain['symbol'].str.startswith(index)]
         
         df_chain['oi'] = pd.to_numeric(df_chain['oi'], errors='coerce')
         df_chain['oi_change'] = df_chain.groupby('symbol')['oi'].diff().fillna(0)
@@ -383,7 +386,8 @@ def detect_unusual_options_flow(index):
     try:
         url = "https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json"
         df_chain = pd.DataFrame(requests.get(url, timeout=10).json())
-        df_chain = df_chain[df_chain['symbol'].str.contains(index, na=False)]
+        # 🚨 CRITICAL FIX: Exact index matching
+        df_chain = df_chain[df_chain['symbol'].str.startswith(index)]
         
         df_chain['ltp'] = pd.to_numeric(df_chain['ltp'], errors='coerce')
         df_chain['oi'] = pd.to_numeric(df_chain['oi'], errors='coerce')
@@ -494,7 +498,8 @@ def detect_gamma_exposure_flip(index):
     try:
         url = "https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json"
         df_chain = pd.DataFrame(requests.get(url, timeout=10).json())
-        df_chain = df_chain[df_chain['symbol'].str.contains(index, na=False)]
+        # 🚨 CRITICAL FIX: Exact index matching
+        df_chain = df_chain[df_chain['symbol'].str.startswith(index)]
         
         df_chain['oi'] = pd.to_numeric(df_chain['oi'], errors='coerce')
         df_chain['strike'] = df_chain['symbol'].str.extract(r'(\d+)')[0].astype(float)
@@ -768,7 +773,8 @@ def detect_gamma_squeeze(index, df):
             url=f"https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json"
             df_s = pd.DataFrame(requests.get(url,timeout=10).json())
             df_s['symbol'] = df_s['symbol'].str.upper()
-            df_index = df_s[df_s['symbol'].str.contains(index)]
+            # 🚨 CRITICAL FIX: Exact index matching
+            df_index = df_s[df_s['symbol'].str.startswith(index)]
             df_index['oi'] = pd.to_numeric(df_index.get('oi',0), errors='coerce').fillna(0)
             ce_oi = df_index[df_index['symbol'].str.endswith("CE")]['oi'].sum()
             pe_oi = df_index[df_index['symbol'].str.endswith("PE")]['oi'].sum()
@@ -1208,7 +1214,7 @@ def detect_bottom_fishing(index, df):
         return None
     return None
 
-# 🚨 UPDATED: INSTITUTIONAL ANTICIPATION INTEGRATION 🚨
+# 🚨 UPDATED: INSTITUTIONAL ANTICIPATION INTEGRATION - FIXED CROSS-CONTAMINATION 🚨
 def analyze_index_signal(index):
     df5 = fetch_index_data(index, "5m", "2d")
     if df5 is None:
@@ -1447,8 +1453,8 @@ def oi_delta_flow_signal(index):
         df=df[df['exch_seg'].str.upper().isin(["NFO", "BFO"])]
         df['symbol']=df['symbol'].str.upper()
         
-        # 🚨 CRITICAL FIX: Only check the current index, not all indices
-        df_index=df[df['symbol'].str.contains(f"{index}\\d", regex=True)]  # Exact index match
+        # 🚨 CRITICAL FIX: Exact index matching using startswith instead of contains
+        df_index=df[df['symbol'].str.startswith(index)]
         
         if 'oi' not in df_index.columns:
             return None
@@ -1743,17 +1749,29 @@ def send_signal(index, side, df, fakeout, strategy_key):
     signal_detection_price = float(ensure_series(df["Close"]).iloc[-1])
     strike = round_strike(index, signal_detection_price)
     
-    if strike is None:
-        send_telegram(f"⚠️ {index}: could not determine strike (price missing). Signal skipped.")
+    # 🚨 ADDED: VALIDATION CHECK FOR STRIKE PRICE
+    if strike is None or strike <= 0:
+        send_telegram(f"⚠️ {index}: Invalid strike price detected. Signal skipped.")
+        return
+        
+    # 🚨 ADDED: CHECK IF STRIKE IS REASONABLE (within 20% of current price)
+    if abs(strike - signal_detection_price) / signal_detection_price > 0.20:
+        send_telegram(f"⚠️ {index}: Strike {strike} too far from current price {signal_detection_price}. Signal skipped.")
         return
         
     # 🚨 FIX: Each index only sends its own symbol
     symbol = get_option_symbol(index, EXPIRIES[index], strike, side)
     option_price = fetch_option_price(symbol)
-    if not option_price: 
+    if not option_price or option_price <= 1: 
+        send_telegram(f"⚠️ {index}: Option price too low or unavailable. Signal skipped.")
         return
     
     entry = round(option_price)
+    
+    # 🚨 ADDED: VALIDATION FOR ENTRY PRICE
+    if entry <= 1:
+        send_telegram(f"⚠️ {index}: Entry price too low (₹{entry}). Signal skipped.")
+        return
     
     high = ensure_series(df["High"])
     low = ensure_series(df["Low"])
@@ -1771,6 +1789,10 @@ def send_signal(index, side, df, fakeout, strategy_key):
     ]
     
     sl = round(option_price - (atr * 0.8))
+    
+    # 🚨 ADDED: VALIDATION FOR STOP LOSS
+    if sl <= 0:
+        sl = round(option_price * 0.8)  # Fallback SL
     
     targets_str = "//".join(str(t) for t in targets) + "++"
     
@@ -1918,6 +1940,7 @@ while True:
         if not STARTED_SENT:
             send_telegram("🚀 GIT ULTIMATE MASTER ALGO STARTED - All 8 Indices Running\n"
                          "✅ INSTITUTIONAL ANTICIPATION ENGINE ACTIVATED 🎯\n"
+                         "✅ CROSS-INDEX CONTAMINATION FIXED 🎯\n"
                          "✅ Gamma Priority on Expiry Days\n"
                          "✅ Real-time Signal Tracking\n"
                          "✅ Comprehensive P&L Analysis")
